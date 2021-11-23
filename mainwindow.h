@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include "initialization.h"
 #include <QMainWindow>
 #include <QtSql>
+
+class Initialization;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; class Initialization; }
@@ -17,9 +18,11 @@ public:
     ~MainWindow();
 
 private slots:
-    void nashSlot(); // это созданный нами слот
+    void run();
+    void away();
 private:
     Ui::MainWindow *ui;
+    Initialization* dialog;
     QSqlQueryModel *m_model;
     QSqlDatabase m_db;
 };

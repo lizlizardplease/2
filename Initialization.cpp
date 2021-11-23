@@ -1,5 +1,6 @@
-#include "initialization.h"
+#include "Initialization.h"
 #include "ui_initialization.h"
+
 
 Initialization::Initialization(QSqlDatabase& db) :
     QDialog(),

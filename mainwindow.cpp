@@ -1,25 +1,20 @@
 #include "mainwindow.h"
+#include "Initialization.h"
 #include "ui_mainwindow.h"
 #include <QDateTime>
 
 
 
-void MainWindow::nashSlot()
+void MainWindow::run()
 
 {
-    QSqlQuery query(m_db);
-    std::string command;
-    QSqlRecord rec;
-    command = ui->todo->toPlainText().toStdString(); // получаем строку из первого QLineEdit
-    if (command == "exit"){}
-    if (!query.exec(command.c_str()))
-    {
-        ui->er->setText("Ошибка: непонятно, чего вы хотите сделать.");
-    }
-    if (!query.isSelect())
-    {
-        ui->er->setText("Сделано.");
-    }
+   ui->er->setText("Ошибка: непонятно, чего вы хотите сделать.");
+}
+void MainWindow::away()
+
+{
+    dialog->show();
+    this->close();
 }
 
 
@@ -27,9 +22,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    dialog = new Initialization(m_db);
     ui->setupUi(this);
+    connect(ui->run, SIGNAL(clicked()), this, SLOT(run()));
+    connect(ui->run_2, SIGNAL(clicked()), this, SLOT(away()));
     m_db = QSqlDatabase::addDatabase("QSQLITE");
-    Initialization* dialog = new Initialization(m_db);
     QSettings settings;
     m_db.setDatabaseName(settings.value("Database_name", "fn1131_2021").toString());
     m_db.setHostName(settings.value("Host_ip", "195.19.32.74").toString());
@@ -50,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     file.open(QIODevice::ReadWrite);
     ui->logsTextBrowser->setText(file.readAll());*/
 
-    delete dialog;
+    //delete dialog;
 }
 
 MainWindow::~MainWindow()
