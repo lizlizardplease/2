@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include <QtSql>
+#include <QListWidget>
 
 class Initialization;
 
@@ -20,8 +21,11 @@ public:
 private slots:
     void run();
     void away();
+    void on_tables_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::MainWindow *ui;
+    QFile file;
     Initialization* dialog;
     QSqlQueryModel *m_model;
     QSqlDatabase m_db;

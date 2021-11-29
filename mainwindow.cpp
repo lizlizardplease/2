@@ -2,32 +2,40 @@
 #include "Initialization.h"
 #include "ui_mainwindow.h"
 #include <QDateTime>
+#include <QString>
 
 
 
 void MainWindow::run()
 
 {
-   ui->er->setText("Ошибка: непонятно, чего вы хотите сделать.");
+    m_model->setQuery(ui->todo->toPlainText());
+    if (m_model->lastError().isValid())
+        ui->er->setText("Ошибка: " + m_model->lastError().text());
+    else{
+        ui->tables->clear();
+        ui->tables->addItems(m_db.tables());
+        ui->todo->setText(" ");
+    }
+    ui->er->setText("Подсказка: кликните по таблице, которую хотите посмотреть!");
 }
 void MainWindow::away()
-
 {
     dialog->show();
-    this->close();
+    //this->close();
 }
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    dialog = new Initialization(m_db);
     ui->setupUi(this);
     connect(ui->run, SIGNAL(clicked()), this, SLOT(run()));
     connect(ui->run_2, SIGNAL(clicked()), this, SLOT(away()));
-    m_db = QSqlDatabase::addDatabase("QSQLITE");
+    m_db = QSqlDatabase::addDatabase("QPSQL");
+    dialog = new Initialization(m_db);
     QSettings settings;
+    settings.beginGroup("/Database_browser/settings");
     m_db.setDatabaseName(settings.value("Database_name", "fn1131_2021").toString());
     m_db.setHostName(settings.value("Host_ip", "195.19.32.74").toString());
     m_db.setPort(settings.value("P0rt", 5432).toInt());
@@ -43,15 +51,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->setModel(m_model);
     ui->tables->addItems(m_db.tables());
 
-    /*file.setFileName("logs.txt");
+    file.setFileName("logs.txt");
     file.open(QIODevice::ReadWrite);
-    ui->logsTextBrowser->setText(file.readAll());*/
-
-    //delete dialog;
+    ui->textBrowser->setText(file.readAll());
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_tables_itemClicked(QListWidgetItem *item)
+{
+    m_model->setQuery("SELECT * FROM " + item->text());
 }
 

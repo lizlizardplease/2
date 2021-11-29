@@ -1,5 +1,5 @@
 #include "Initialization.h"
-#include "ui_initialization.h"
+#include "ui_Initialization.h"
 
 
 Initialization::Initialization(QSqlDatabase& db) :
@@ -12,8 +12,17 @@ Initialization::Initialization(QSqlDatabase& db) :
     file_conn.open(QIODevice::ReadOnly);
     inf.setFileName("temp.txt");
     inf.open(QIODevice::Append);
+    connect(ui->pb, SIGNAL(pressed()), this, SLOT(on_pushButton_clicked()));
+    QSettings settings;
+    settings.beginGroup("/Database_browser/settings");
+    ui->lineEdit_db_name->setText     (settings.value("Database_name", "fn1131_2021" ).toString());
+    ui->lineEdit_ip->setText       (settings.value("Host_ip"      , "195.19.32.74").toString());
+    ui->lineEdit_port->setText     (settings.value("P0rt"         , 5432          ).toString());
+    ui->lineEdit_login->setText    (settings.value("L0g1n"        , "student"     ).toString());
+    ui->lineEdit_password->setText (settings.value("Password"     , "bmstu"       ).toString());
+    settings.sync();
+    settings.endGroup();
 }
-
 
 Initialization::~Initialization()
 {
@@ -65,12 +74,11 @@ void Initialization::on_pushButton_clicked()
                        + ui->lineEdit_port->text() + '\n'
                        + ui->lineEdit_login->text() + '\n'
                        + ui->lineEdit_password->text() + '\n' + '\n';
-
-
-            if(m_db.isOpen())
-
-                accept();
-
+            if(m_db.isOpen()){
+                MainWindow w;
+                w.show();
+               this->close();
+}
             else
                ui->errrlab->setText(m_db.lastError().text());
             file_conn.close();
