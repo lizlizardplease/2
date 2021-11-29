@@ -21,10 +21,32 @@ void MainWindow::run()
 }
 void MainWindow::away()
 {
-    dialog->show();
-    //this->close();
+    if (dialog->exec() == QDialog::Accepted){
+        ui->tables->clear();
+        ui->tables->addItems(m_db.tables());
+        m_model->clear();
+    }
 }
+MainWindow::MainWindow(QSqlDatabase& db, QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    connect(ui->run, SIGNAL(clicked()), this, SLOT(run()));
+    connect(ui->run_2, SIGNAL(clicked()), this, SLOT(away()));
+    m_db = db;
+    dialog = new Initialization(m_db);
+    if (!m_db.open())
+    {
+        ui->er->setText("Error: " + m_model->lastError().text());
+    }
+    m_model=new QSqlQueryModel;
+    ui->tableView->setModel(m_model);
+    ui->tables->addItems(m_db.tables());
 
+    file.setFileName("logs.txt");
+    file.open(QIODevice::ReadWrite);
+    ui->textBrowser->setText(file.readAll());
+}
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)

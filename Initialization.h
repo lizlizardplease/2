@@ -20,7 +20,7 @@ public:
     ~Initialization();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_pb_clicked();
 
 private:
     QSqlDatabase& m_db;
